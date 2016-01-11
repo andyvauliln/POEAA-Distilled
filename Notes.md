@@ -55,7 +55,7 @@ Mainframes => 2 Layers (Desktop Client, Server {DB}) => 3 Layers (Desktop Client
 	* Other Applications
 	* Messaging Systems
 
-Note on Modern Architectures: Latest systems are developed such that presentation layer apps (desktop, laptop and mobile devices {tablets, phones and wearables}) talk to backend services which inturn use polyglot persistence.
+> **NOTE** - Latest systems are developed such that presentation layer apps (desktop, laptop and mobile devices {tablets, phones and wearables}) talk to backend services which inturn use polyglot persistence.
 
 ### Separating Concerns
 Level of sepration purely depends on complexity and other requirements, but it is good to have some amount of separation at least at the subroutine level.
@@ -78,7 +78,7 @@ Level of sepration purely depends on complexity and other requirements, but it i
 	* Presentation - This depends purely on the type of client you decide upon. Web clients vs Rich Client. As per latest trends (2016) we have plethora of devices interacting with backend services. We also have Single Page Application with the recent avatar of JavaScript everywhere. Instead of relying in servers rendering the presentation, it is handled elegantly on the clientside by JS MV* Frameworks and Libraries. Thus the presentation, even if it is a web client, can run on both client and server. Rich clients as the name implies runs on client and leaves us open to challenges like version management, compatibility amidst other issues. However we have another new ecosystem of clients -> "Apps" which again get classified as (Native, Web and Hybrid) running on mobile devices like mobiles, tablets, wearables and even automobiles. Hence take into consideration the requirements putforth by business and their target audience / clients before deciding on the presentation.
 	* Domain Logic - Best run on servers for reasons mentioned above as in data sources. However, a part of it could be on client for responsiveness or disconnected use.
 
-Note - Don't try to separate the layers into discrete processes unless you absolutely need to as doing that will both degrade performance and add complexity.
+> **NOTE** - Don't try to separate the layers into discrete processes unless you absolutely need to as doing that will both degrade performance and add complexity.
 
 # Chapter 2 - Organizing Domain Logic
 * Three main patterns for organizing domain logic.
@@ -109,7 +109,8 @@ Making a choice depends on lots of factors:
 * If the complexity of the domain logic is more prefer using Domain Model. Identifying this complexity comes with experience working in multiple domains and also expertise in the given domain.
 * Team's knowledge level and adapting capabilities to a great extent decides the choice. If the team makes the paradigm shift towards Domain Model with ease go for it!
 * The choice is never cast on stone, only that it takes a while and it is tricky to refactor once the choice is made.
-* NOTE: These patterns are not mutually exclusive choices.
+
+> **NOTE** - These patterns are not mutually exclusive choices.
 
 ## Service Layer
 * Common approach to split the domain layer into two - Service Layer placed over an underlying Domain Model or Table Module. (Domain Layer using only Transaction Script doesn't warrant a separate Service Layer)
@@ -121,3 +122,44 @@ Making a choice depends on lots of factors:
 * Midway - controller-entity style - have logic that is particular to a single transaction or use case placed in Transaction Scripts which are commonly referred to as controllers or services. Behavior that is used in more than one use case goes on the domain objects, which are called entities.
 * If you are using Domain Model - Make It Dominant!
 * Better to have thinnest Service Layer (OTOH Randy Stafford has seen success with richer Service Layer.)
+
+# Chapter 3 - Mapping to Realtional Databases
+## Architectural Patterns
+* These drive the way in which domain logic talk to database.
+* Pay attention: the choice made here has far reaching impact and is difficult to refactor.
+* It's also a choice that is strongly affected by how you design your domain logic.
+* Pitfalls using SQL
+    * Developers don't understand SQL.
+    * Problems in defining effecting SQL queries and commands.
+    * DBAs also like to get at SQL to understand how to tune it and better arrange indexes for performance.
+* Better to separate SQL from domain logic and place it in separate classes.
+* Database developers have a clear place to go and find SQL and optimize it!
+* Gateway - Base classes on the table structure of the database and have one class per database table.
+* Types
+    * Row Data Gateway
+    * Table Data Gateway
+
+### Row Data Gateway
+* Have an instance for each row in the database table.
+* Fits naturally into OO way of thinking about data.
+
+### Table Data Gateway
+* Have an instance for each table.
+* Works on Record Set. Most UI applications and controls naturally work with a Record Set.
+* As it fits nicely with a Record Set, it is the preferred choice while using a Table Module.
+* Preferably use stored procedures instead of SQL, have a set of stored procedures as defining a Table Data Gateway. Also have in-memory Table Data Gateway to wrap calls to the stored procedures.
+
+### Active Record
+* If you Domain Model - both Row Data Gateway and Table Data Gateway could be used, that said, it might be too much of indirection.
+* In simple applications - Domain Model, corresponds pretty closely to the database structure. (1 domain class per table)
+* As these domain objects have moderately complex business logic, it makes sense to have each domain object responsible for loading and saving data - a.k.a Active Record.
+* However, as Domain Model gets richer, 'Active Record' breaks down!
+* Databases don't handle inheritance and things get more complex.
+* As Domain Model gets richer Gateways can solve the problem, however, the coupling between Domain Model and Database remains and prevents us from testing our Domain Model in isolation without depending on the database.
+
+### Data Mapper
+* Isolate Domain Model from database using Data Mapper.
+* Data Mapper handles loading and storing of data between databases and Domain Model and allows both to vary independently.
+* Complicated database mapping architecture, yet has benefit of complete isolation of two layers.
+
+> **NOTE** - Gateway is not recommended as the primary persistence mechanism for Domain Model. For a simple Domain Model - Active Record is the simplest way to go, for something complex use a Data Mapper.
