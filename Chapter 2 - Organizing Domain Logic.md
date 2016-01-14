@@ -1,15 +1,18 @@
 # Chapter 2 - Organizing Domain Logic
+
 * Three main patterns for organizing domain logic.
 	* Transaction Script
 	* Domain Model
 	* Table Module
 
 ## Transaction Script
+
 *  Script for an action or business transaction
 * The disadvantages are more than the advantages like simplicity, ease of handling transaction boundaries and being similar to procedural model easily understood by developers.
 * The code becomes an entangled mess as complexity increases.
 
 ## Domain Model
+
 * Provides an Object Oriented way to handling domain logic.
 * Build a model of the domain - validations and calculations are part of domain objects.
 * Slightly hard to wrap your head if you are new, but once you make the paradigm shift and start using this, there is no going back!
@@ -18,11 +21,13 @@
 * A sophisticated data source layer is much like a fixed cost, it takes fair amount of time to build one or money to buy one.
 
 ## Table Module
+
 * Important difference between this and Domain Model - In Domain Model, there is one instance per record in the database, whereas in case of Table Module there is only one instance per table - it is designed to work with a Record Set.
 * Middle ground between Transaction Script and Domain Model
 * Biggest Advantage - Fits into the rest of the architecture. GUI environments are build to work on the results of a SQL query organized in a Record Set.
 
 ## Making a Choice
+
 Making a choice depends on lots of factors:
 * If the complexity of the domain logic is more prefer using Domain Model. Identifying this complexity comes with experience working in multiple domains and also expertise in the given domain.
 * Team's knowledge level and adapting capabilities to a great extent decides the choice. If the team makes the paradigm shift towards Domain Model with ease go for it!
@@ -31,6 +36,7 @@ Making a choice depends on lots of factors:
 > **NOTE** - These patterns are not mutually exclusive choices.
 
 ## Service Layer
+
 * Common approach to split the domain layer into two - Service Layer placed over an underlying Domain Model or Table Module. (Domain Layer using only Transaction Script doesn't warrant a separate Service Layer)
 * Presentation Layer talk to this Service Layer and it acts like an API.
 * Good spot for transaction control and security. (Example: Attributes in .NET used for describing transactional and security characteristics.)

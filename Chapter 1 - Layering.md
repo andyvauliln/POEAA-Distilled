@@ -1,19 +1,25 @@
 # Chapter 1 - Layering
+
 ## Layering Benefits and Downsides
+
 ### Benefits
+
 * Understand a layer independent of other
 * Substitute layers - plug and play
 * Minimize dependencies between layers
 * Standardization
 
 ### Downsides
+
 * Not everything gets abstracted, sometimes you have cascading changes
 * Can harm performance
 
 ## The Evolution of Enterprise Applications
+
 Mainframes => 2 Layers (Desktop Client, Server {DB}) => 3 Layers (Desktop Client, Domain Logic, {DB} Server) => 3 Layers (Web Interface, Domain Logic, {DB} Server)
 
 ## The Three Principal Layers
+
 * Presentation : External interface for a service your system offers to an user or a client program
 	* Web Client
 	* Rich Client (Windows Based Application Clients)
@@ -31,13 +37,16 @@ Mainframes => 2 Layers (Desktop Client, Server {DB}) => 3 Layers (Desktop Client
 > **NOTE** - Latest systems are developed such that presentation layer apps (desktop, laptop and mobile devices {tablets, phones and wearable}) talk to back-end services which in-turn use polyglot persistence.
 
 ### Separating Concerns
+
 Level of separation purely depends on complexity and other requirements, but it is good to have some amount of separation at least at the subroutine level.
 
 ### Direction of Dependency
+
 * Presentation -> Domain Objects -> Data Source
 * Identifying and separating code across layers - If there is some functionality getting duplicated in a higher layer, that probably belongs to lower layers and it better abstracted as part of the lower layer. e.g. Adding a command line interface to a web application, if there is significant amount of code getting duplicated in order to do this, that's a sign where domain logic has leaked into presentation.
 
 ## Choosing Where to Run Your Layers
+
 * Decision is whether to run on a client, or on desktops, or on servers.
 * Running of server and having a simple HTML client has its own benefits.
 	* Easy to upgrade or fix since it's in a limited amount of places.

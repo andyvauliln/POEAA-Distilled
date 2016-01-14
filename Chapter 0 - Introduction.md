@@ -1,6 +1,7 @@
 # Introduction
 
 ## Thinking About Performance
+
 * Response Time
 * Responsiveness
 * Latency
@@ -15,6 +16,7 @@
 	* Horizontal Scalability - Scaling Out
 
 ## The Structure of Patterns
+
 * Name
 * Intent
 * Sketch
