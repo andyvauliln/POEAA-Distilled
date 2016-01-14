@@ -1,4 +1,4 @@
-# Chapter 3 - Mapping to Realtional Databases
+# Chapter 3 - Mapping to Relational Databases
 ## Architectural Patterns
 * These drive the way in which domain logic talk to database.
 * Pay attention: the choice made here has far reaching impact and is difficult to refactor.
@@ -42,8 +42,8 @@
 ### OODB - Object Oriented Databases
 * There is a fundamental impedance mismatch between objects and databases. (Today NoSQL typically Document Databases helps handle this with ease upto some extent).
 * There was some effort towards building Object Oriented Databases, you work with in memory objects the database determines when to move objects on and off disks.
-* NoSQL and Polyglot Peristence are techniques used nowadays, which in a way is nothing but OODBs.
-* NoSQL is gaining traction and more support. Earlier Object Databases has little support / adoption as compared to RDBMS.
+* NoSQL and Polyglot Persistence are techniques used nowadays, which in a way is nothing but OODBs.
+* NoSQL is gaining traction and more support. Earlier Object Databases had little support / adoption as compared to RDBMS.
 * Implementations include - See [Wikipedia](https://en.wikipedia.org/wiki/Object_database#External_links)
     * Flat file
     * Column-oriented
@@ -52,10 +52,11 @@
     * Deductive
     * Temporal
     * XML data stores
-    * Triplestores
+    * Triple-stores
 
 ### ORM - Object Relational Mapper
 * Even if you cannot consider using OODB consider buying a ORM tool.
-* Builing a Data Mapper is a complicated endeavor
+* Building a Data Mapper is a complicated endeavor
 * These tools aren't cheap - Make the decision between buy Vs. build!
 * Even if you buy these ORM tools, it is good to know these patterns, as it might help in tuning a tool as it takes a small but significant chunk of work.
+

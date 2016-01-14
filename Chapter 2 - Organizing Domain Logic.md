@@ -36,7 +36,7 @@ Making a choice depends on lots of factors:
 * Good spot for transaction control and security. (Example: Attributes in .NET used for describing transactional and security characteristics.)
 * Key decision: How to much behavior to put in Service Layer?
 * Typically oriented around use cases.
-* Another extreme - most buiness logic is present inside Transaction Scripts inside the Service Layer. The underlying domain objects are very simple; if it's a Domain Model it will be one to one with the database and can thus use a simple data source layer such as Active Record.
+* Another extreme - most business logic is present inside Transaction Scripts inside the Service Layer. The underlying domain objects are very simple; if it's a Domain Model it will be one to one with the database and can thus use a simple data source layer such as Active Record.
 * Midway - controller-entity style - have logic that is particular to a single transaction or use case placed in Transaction Scripts which are commonly referred to as controllers or services. Behavior that is used in more than one use case goes on the domain objects, which are called entities.
 * If you are using Domain Model - Make It Dominant!
 * Better to have thinnest Service Layer (OTOH Randy Stafford has seen success with richer Service Layer.)
