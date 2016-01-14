@@ -1,4 +1,4 @@
-# PATTERNS OF ENTERPRISE APPLICATION ARCHITECTURE
+# PATTERNS OF ENTERPRISE APPLICATION ARCHITECTURE DISTILLED
 
 > **IMPORTANT NOTE** - This work contains notes gathered by reading Martin Fowler's book. This includes important points from the book and also compares the concepts / patterns with latest developments in the area of enterprise application development, based on the limited experience and knowledge, that I possess. - **Srihari Sridharan**
 
