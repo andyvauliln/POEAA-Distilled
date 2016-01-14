@@ -348,7 +348,8 @@ Making a choice depends on lots of factors:
 * Take the value object and embed them into the linked object as Embedded Value.
 * Since Value Objects have value semantics, create them each time with a read.
 * While saving, just dereference the object and spit of the fields into the owning table.
-> **NOTE** - .NET provides an excellent support for value objects using `struct`.
+
+> **NOTE** - .NET provides excellent support for value objects using `struct`.
 
 ### Serialized LOB
 
