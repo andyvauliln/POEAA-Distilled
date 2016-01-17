@@ -319,14 +319,14 @@ Making a choice depends on lots of factors:
 	* Better to use some form of metadata-based approach.
 * Use Dependent Mapping to simplify mapping, if the collection isn't used outside the scope of the source object.
 
-### Association Table Mapping
+#### Association Table Mapping
 
 * Used  to handle many-to-many relationships.
 * Create a new relational table to handle the many-to-many association.
 
-#### Common Gotchas
+##### Common Gotchas
 
-##### Use unordered sets instead of ordered collections
+###### Use unordered sets instead of ordered collections
 
 * Don't rely on ordering within a collection.
 * In OO languages it is common to use List or Array and it makes testing easier.
@@ -334,14 +334,14 @@ Making a choice depends on lots of factors:
 * Consider using unordered sets for storing collections.
 * Decide on sort order whenever you do a collection query.
 
-##### Defer referential integrity checks to end of a transaction
+###### Defer referential integrity checks to end of a transaction
 
 * If not, referential integrity checks are done for each update.
 * Defer checks to the end, be careful with updates and their order.
 * Either do a topological sort on the updates or hard code the order in which tables are written to database.
 * This reduces deadlocks in the database that cause transactions to rollback too often.
 
-### Value Objects
+#### Value Objects
 
 * Don't use Identity Map for Value Objects.
 * Small value objects like currency and date and time shouldn't be represented as their own table in the database.
@@ -351,7 +351,7 @@ Making a choice depends on lots of factors:
 
 > **NOTE** - .NET provides excellent support for value objects using `struct`.
 
-### Serialized LOB
+#### Serialized LOB
 
 * Taking a while cluster of objects and saving them as a single column in a table as Serialized LOB.
 * LOB - Large Objects - Can be BLOB - Binary Large Object or CLOB - Character Large Object.
@@ -363,3 +363,132 @@ Making a choice depends on lots of factors:
 * Don't use this too much as it turns the database into little more than a transactional file system.
 
 > **NOTE** - Document databases (NoSQL) like MongoDB and Cassandra greatly support storing and querying whole object hierarchies or collection of objects as documents.
+
+### Inheritance
+
+* Hierarchies discussed above are composition hierarchies, where relational databases do poorly.
+* Another hierarchy where relational databases have headaches - class hierarchies - *Inheritance*
+* Three options:
+	* Single Table Inheritance
+	* Concrete Table Inheritance
+	* Class Table Inheritance
+* Important trade-offs - Duplication of data structures Vs. Speed of access.
+
+#### Class Table Inheritance
+
+* Simplest relationship between classes and tables.
+* Needs multiple joins to load data and hence reduces performance.
+
+#### Concrete Table Inheritance
+
+* Allows you to avoid joins and fetch an object from a table.
+* However, it is brittle to changes.
+* A change in super class might involve changing all the sub classes and alter respective tables.
+* Altering the hierarchy itself can cause even bigger changes.
+* Lack of super class table makes key management awkward and get in the way of referential integrity.
+
+#### Single Table Inheritance
+
+* Single table for the entire class hierarchy.
+* Biggest downside is wasted space - each row has columns for all possible fields in sub-types - many databases do a good job in compressing wasted space.
+* Greatest advantage - all stuff in one place - no need of joins
+
+#### Which one to use?
+
+* No clear winner - depends on circumstances and preferences
+* Martin Fowler prefers - Single Table Inheritance as the first choice.
+* Best to talk to DBAs.
+
+## Building the Mapping
+
+* 3 situations when mapping to a relational database.
+	* Choosing the schema yourselves.		  
+	* Map to an existing schema, which can't be changed.
+	* Map to an existing schema, but changes to it are negotiable.
+* Simplest case - You choose your schema, with little to moderate complexity in domain logic.
+	* Use Transaction Script or Table Module.
+	* Use a Row Data Gateway or Table Data Gateway to pull SQL away from domain logic.
+* If you are using a Domain Model
+	* Beware of design that looks like database design.
+	* Build Domain Model without regard to database - helps simplify the domain logic.
+	* Use Data Mapper in complex scenarios.
+	* If database design is isomorphic to Domain Model, use Active Record.
+* Model first is advisable only in short iterative cycles. If cycles are longer this approach is risky and gives more trouble.
+* Integrate each piece of Domain Model with the database as you go.
+* If schema already exists - similar approach
+	* Row Data Gateway or Table Data Gateway for simpler cases, and layer the domain logic on top of that.
+	* For complex domain logic use Domain Model, which is unlikely to match database design, gradually build up the Domain Model and include Data Mappers to persist the data to the existing database.
+
+### Double Mapping
+
+* Same kind of data needs to be pulled from more than one source.
+* E.g. multiple databases that hold the same data, with minor differences in schema.
+* E.g. similar data from multiple sources, XML files, databases, etc.
+* Two options
+	* Simplest option
+		* Have multiple mapping layers, one for each data source.
+		* Leads to duplication.
+	* Better option - 2 step mapping scheme.
+		* Step 1 - Convert data from in-memory schema to a logical data store schema, which maximizes the similarities in the data source formats.
+		* Step 2 - Map from logical data store schema to actual physical data store schema.
+
+## Using Metadata
+
+* Boiling down the mapping into metadata file that details how columns in the database map to fields in objects.
+* Avoids repetitive code that does mapping between fields in objects, using either code generation or reflective programming.
+* Used by commercial ORM tools.
+* Metadata Mapping provides necessary foundation to build queries in terms of in-memory objects.
+
+### Query Object
+
+* Allows you to build your queries in terms of in-memory objects and data in such a way that developers don't need to know either SQL or the details of the relational schema.
+* It can then use the Metadata Mapping to translate expressions based on object fields into the appropriate SQL.
+
+### Repository
+
+* Hides the database from view.
+* Any queries to the database can be made as Query Objects against a Repository and developers can't tell whether the objects were retrieved from memory or from the database.
+* Works well with rich Domain Model systems.
+
+## Database Connections
+
+* Database connection is the link between application code and database.
+* Connection must be opened before executing commands against a database.
+* Same connection must be opened for the whole time the command is executed.
+* Queries return a Record Set - disconnected Vs. connected.
+* Transactions are bound to a connection, it must remain open for whole period of the transaction.
+* Connection creation is expensive.
+* Wise to use some form of connection pooling.
+* Measure performance of connection pooling Vs. creating connections.
+* Environments are making it quicker to create a new connection so there's no need to pool.
+* Environments usually provide an interface and properly encapsulate the connection creation logic, so we don't know whether connection is from the pool or newly created.
+* Similarly closing the connection might not close it, but return to the pool.
+* Close connections as soon as they are used.
+* In transactions be sure to use the same connection.
+* Get a connection explicitly with a call to connection pool or manager and pass it to every command - once done, close the connection.
+	* Leads to two issues:
+		* Making sure you have the connection everywhere you need it.
+		* Ensuring not to forget to close the connection.
+	* Two choices to ensure connection is available everywhere:
+		* Pass along connection as a parameter in every method, sometimes this is ugly since the connection gets used five levels down the stack and code is less maintainable.
+		* Better to use Registry pattern. Ensure that connections are not used by multiple threads, use a thread scoped registry.
+	* Explicitly closing the connection is not a good idea.
+	* Cannot close the connection with every command in a transaction since, it might rollback the transaction.
+	* Modern environments provide garbage collection. One way to close connections is to use the garbage collector.
+	* But relying on garbage collector is not preferred as the only mechanism, it can be a backup mechanism if the regular one fails to close the connection.
+	* Garbage collector, might let the connections hang around for a while till they are actually collected, which might not be desirable.
+* Better to tie connections to transactions - open on begin and close on commit or rollback.
+* Unit of Work is a natural fit to manage transactions and connections.
+* For things outside a transaction use a connection pool.
+* Connection management depends on database environment.
+* For disconnected Record Sets, open connection, fetch the data and close it. After changes are made offline, you can open another connection, transaction and commit the data. However, you need to care about concurrency control while changes to the database were done by other users, while your Record Set was offline.
+
+## Miscellaneous Points
+
+* Do not use Select *.
+* Better to use column name indices than using column number indices.
+* Have unit tests for CRUD operations - helps catch when SQL gets out of sync with code.
+* Better to use static SQL that can be pre-compiled, than using dynamic SQL.
+* Avoid using string concatenation to put together SQL queries.
+* Batch multiple SQL queries into a single call.
+
