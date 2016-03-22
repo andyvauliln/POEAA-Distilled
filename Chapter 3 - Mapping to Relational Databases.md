@@ -30,7 +30,7 @@
 
 ### Active Record
 
-* If you Domain Model - both Row Data Gateway and Table Data Gateway could be used, that said, it might be too much of indirection.
+* If you use Domain Model - both Row Data Gateway and Table Data Gateway could be used, that said, it might be too much of indirection.
 * In simple applications - Domain Model, corresponds pretty closely to the database structure. (1 domain class per table)
 * As these domain objects have moderately complex business logic, it makes sense to have each domain object responsible for loading and saving data - a.k.a Active Record.
 * However, as Domain Model gets richer, 'Active Record' breaks down!
